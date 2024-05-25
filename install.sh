@@ -134,3 +134,7 @@ install_hugo() {
   tar -xvf "$OUTPUT" -C "$HOME/bin/hugo"
   rm "$OUTPUT"
 }
+
+install_ohmyposh() {
+  wget -qO- https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin
+}
