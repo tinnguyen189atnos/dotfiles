@@ -20,7 +20,7 @@ require("lazy").setup({
       require("gruvbox").setup({
         contrast = "hard",
       })
-      vim.o.backgroud = "dark"
+      vim.o.background = "dark"
       vim.cmd([[colorscheme gruvbox]])
     end
   },

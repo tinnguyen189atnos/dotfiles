@@ -4,7 +4,7 @@
 mkdir -p "$HOME/bin"
 
 # Install NVM, Node.js
-NVM_DIR="$HOME/.nvm"
+NVM_DIR="$HOME/bin/nvm"
 if [ -d "$NVM_DIR" ]; then
   echo "Repository already exists in $NVM_DIR"
 else
