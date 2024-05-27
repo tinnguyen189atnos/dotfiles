@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+CMD=""
+
+# If DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME are set, use them
+if [ ! -z $DB_HOST ]; then
+    CMD="PGHOST=$DB_HOST"
+fi
+if [ ! -z $DB_PORT ]; then
+    CMD="$CMD PGPORT=$DB_PORT"
+fi
+if [ ! -z $DB_USER ]; then
+    CMD="$CMD PGUSER=$DB_USER"
+fi
+if [ ! -z $DB_PASSWORD ]; then
+    CMD="$CMD PGPASSWORD=$DB_PASSWORD"
+fi
+if [ ! -z $DB_NAME ]; then
+    CMD="$CMD PGDATABASE=$DB_NAME"
+else
+    CMD="$CMD PGDATABASE=postgres"
+fi
+CMD="$CMD psql $@"
+
+# "$CMD"
+eval "$CMD"

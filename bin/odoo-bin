@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+CMD=""
+COMMANDS="cloc db deploy genproxytoken help neutralize populate scaffold shell start tsconfig"
+
+if [ -z $PYTHON_BIN ]; then
+    echo "PYTHON_BIN is not set"
+    exit 1
+else
+    CMD="$PYTHON_BIN"
+fi
+
+if [ -z $ODOO_BIN ]; then
+    echo "ODOO_BIN is not set"
+    exit 1
+else
+    if [[ $COMMANDS == *"$1"* ]]; then
+        COMMAND="$1"
+        shift
+    else
+	COMMAND="server"
+    fi
+    CMD="$CMD $ODOO_BIN $COMMAND"
+fi
+
+# If ODOO_RC is set, use it
+if [ ! -z $ODOO_RC ]; then
+    CMD="$CMD -c $ODOO_RC"
+fi
+
+# If DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME are set, use them
+if [ ! -z $DB_HOST ]; then
+    CMD="$CMD --db_host $DB_HOST"
+fi
+if [ ! -z $DB_PORT ]; then
+    CMD="$CMD --db_port $DB_PORT"
+fi
+if [ ! -z $DB_USER ]; then
+    CMD="$CMD -r $DB_USER"
+fi
+if [ ! -z $DB_PASSWORD ]; then
+    CMD="$CMD -w $DB_PASSWORD"
+fi
+if [[ ! -z $DB_NAME ]] && [[ $COMMAND != "db" ]]; then
+    CMD="$CMD -d $DB_NAME"
+fi
+
+# echo $CMD $@
+eval $CMD $@
