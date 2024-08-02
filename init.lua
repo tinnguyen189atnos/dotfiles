@@ -132,5 +132,5 @@ keymap.set("i", "<A-Left>", "<Esc>:tabprevious <CR>")
 
 vim.cmd([[
 	autocmd FileType xml setlocal shiftwidth=4 tabstop=4 expandtab foldmethod=indent 
-	autocmd FileType py foldmethod=syntax 
+	autocmd FileType python setlocal foldmethod=indent
 ]])
