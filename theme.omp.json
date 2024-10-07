@@ -4,6 +4,17 @@
     {
       "alignment": "left",
       "segments": [
+	{
+	  "type": "session",
+	  "style": "plain",
+	  "foreground": "#00ff00",
+	  "template": "{{ if .SSHSession }} ( {{ .HostName }} ) {{ end }}"
+	},
+	{
+	  "type": "python",
+	  "style": "powerline",
+	  "template": "{{ if .Venv }}(🐍 {{ .Venv }}) {{ end }}"
+	},
         {
           "foreground": "#E36464",
           "style": "plain",
@@ -19,7 +30,7 @@
         {
           "foreground": "#56B6C2",
           "properties": {
-            "style": "folder"
+            "style": "full"
           },
           "style": "plain",
           "template": " {{ .Path }}",
