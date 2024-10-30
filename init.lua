@@ -1,3 +1,4 @@
+local keymap = vim.keymap
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   vim.fn.system({
@@ -46,29 +47,226 @@ require("lazy").setup({
       })
     end,
   },
-
+  {
+    "L3MON4D3/LuaSnip",
+    -- follow latest release.
+    version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+    -- install jsregexp (optional!).
+    build = "make install_jsregexp",
+    config = function()
+      local ls = require("luasnip")
+      -- some shorthands...
+      local s = ls.snippet
+      local sn = ls.snippet_node
+      local t = ls.text_node
+      local i = ls.insert_node
+      local f = ls.function_node
+      local c = ls.choice_node
+      local d = ls.dynamic_node
+      local r = ls.restore_node
+      local l = require("luasnip.extras").lambda
+      local rep = require("luasnip.extras").rep
+      local p = require("luasnip.extras").partial
+      local m = require("luasnip.extras").match
+      local n = require("luasnip.extras").nonempty
+      local dl = require("luasnip.extras").dynamic_lambda
+      local fmt = require("luasnip.extras.fmt").fmt
+      local fmta = require("luasnip.extras.fmt").fmta
+      local types = require("luasnip.util.types")
+      local conds = require("luasnip.extras.conditions")
+      local conds_expand = require("luasnip.extras.conditions.expand")
+      
+      
+      -- Adjusted Odoo XML view snippet
+      ls.add_snippets("xml", {
+          s("odoo", fmt([[
+      <?xml version="1.0" encoding="UTF-8"?>
+      <odoo>
+      
+      </odoo>
+          ]], {})),
+          s("view", fmt([[
+      <record id="{}" model="ir.ui.view">
+          <field name="name">{}</field>
+          <field name="model">{}</field>
+          <field name="arch" type="xml">
+          	
+          </field>
+      </record>
+          ]], {
+              i(1, "view_id"),            -- Placeholder for the record ID
+              i(2, "view.name"),          -- Placeholder for the view name
+              i(3, "model.name"),         -- Placeholder for the model name
+          })),
+          s("form", fmt([[
+      <form string="{}">
+          <header/>
+          <sheet>
+              <div class="oe_button_box" name="button_box"/>
+          </sheet>
+      </form>
+          ]], {
+              i(1, "Form Name"),            -- Placeholder for the record ID
+          })),
+          s("tree", fmt([[
+      <tree string="{}">
+      </tree>
+          ]], {
+              i(1, "Tree Name"),            -- Placeholder for the record ID
+          })),
+          s("inherit", fmt([[
+      <field name="inherit_id" ref="{}"/>
+          ]], {
+      	i(1, "Inherit ID"),            -- Placeholder for the record ID
+          })),
+          s("xpath", fmt([[
+      <xpath expr="{}" position="{}">
+      
+      </xpath>
+          ]], {
+      	i(1, "XPath Expression"),            -- Placeholder for the record ID
+      	i(2, "Position"),            -- Placeholder for the record ID
+          })),
+          s("field", fmt([[
+      <field name="{}"/>
+          ]], {
+      	i(1, "Field Name"),            -- Placeholder for the record ID
+          })),
+      })
+      
+      ls.add_snippets("python", {
+          s("odoo", fmt([[
+      import logging
+      
+      from odoo import models, fields, api
+      
+      _logger = logging.getLogger(__name__)
+          ]], {})),
+          s("m", fmt([[
+      class {}(models.Model):
+          _name = '{}'
+          ]], {
+      	i(1, "Model Name"),            -- Placeholder for the record ID
+      	i(2, "Model Name"),            -- Placeholder for the record ID
+          })),
+          s("f", fmt([[
+      {} = fields.{}(
+          ]], {
+      	i(1, "Field Name"),            -- Placeholder for the record ID
+      	c(2, {
+      	    t("Char"),
+      	    t("Integer"),
+      	    t("Float"),
+      	    t("Boolean"),
+      	    t("Date"),
+      	    t("Datetime"),
+      	    t("Selection"),
+      	    t("Many2one"),
+      	    t("One2many"),
+      	    t("Many2many"),
+      	}),	-- Placeholder for the record ID
+          })),
+	  s("compute", fmt([[
+      @api.depends({})
+      def _compute_{}(self):
+          pass
+	  ]], {
+      	    i(1, "Field Name"),            -- Placeholder for the record ID
+      	    i(2, "Compute Method Name"),            -- Placeholder for the record ID
+	  })),
+	  s("selection", fmt([[
+      {} = fields.Selection([
+      ], string='{}')
+	  ]], {
+      	    i(1, "Field Name"),            -- Placeholder for the record ID
+      	    i(2, "Field Label"),            -- Placeholder for the record ID
+	  })),
+	  s("m2o", fmt([[
+      {} = fields.Many2one('{}', string='{}')
+	  ]], {
+      	    i(1, "Field Name"),            -- Placeholder for the record ID
+      	    i(2, "Model Name"),            -- Placeholder for the record ID
+	    i(3, "Field Label"),            -- Placeholder for the record ID
+	  })),
+	  s("o2m", fmt([[
+      {} = fields.One2many('{}', '{}', string='{}')
+	  ]], {
+      	    i(1, "Field Name"),            -- Placeholder for the record ID
+      	    i(2, "Model Name"),            -- Placeholder for the record ID
+	    i(3, "Comodel Name"),            -- Placeholder for the record ID
+	    i(4, "Field Label"),            -- Placeholder for the record ID
+	  })),
+	  s("m2m", fmt([[
+      {} = fields.Many2many('{}', string='{}')
+	  ]], {
+      	    i(1, "Field Name"),            -- Placeholder for the record ID
+      	    i(2, "Model Name"),            -- Placeholder for the record ID
+	    i(3, "Field Label"),            -- Placeholder for the record ID
+	  })),
+      })
+      vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true})
+      vim.keymap.set({"i", "s"}, "<C-L>", function() ls.jump( 1) end, {silent = true})
+      vim.keymap.set({"i", "s"}, "<C-J>", function() ls.jump(-1) end, {silent = true})
+      vim.keymap.set("i", "<C-Space>", function() 
+        if ls.expand_or_jumpable() then 
+          ls.expand_or_jump() 
+        end 
+      end, {silent = true})
+      
+      vim.keymap.set({"i", "s"}, "<C-E>", function()
+      	if ls.choice_active() then
+      		ls.change_choice(1)
+      	end
+      end, {silent = true})
+      	end,
+  },
   {
     "nvim-telescope/telescope.nvim",
     tag = "0.1.6",
     config = function()
       local builtin = require("telescope.builtin")
-      local type_filter_map = {
-        javascript = "js",
-	python = "py",
-      }
-      vim.keymap.set("n", "ff", builtin.find_files)
-      vim.keymap.set("n", "fb", builtin.buffers)
-      vim.keymap.set("n", "fg", builtin.live_grep)
-      vim.keymap.set("n", "tfg", function()
-        local type_filter = vim.bo.filetype
-	type_filter = type_filter_map[type_filter] or type_filter
-	if string.len(type_filter) <= 0 then
-	  -- builtin.live_grep()
-	  vim.notify("No file type detected", 1)
-	else
-	  builtin.live_grep({ type_filter = type_filter, prompt_title = "Grep " .. type_filter })
-	end
-      end)
+      keymap.set("n", "ff", builtin.find_files)
+      keymap.set("n", "fb", builtin.buffers)
+      keymap.set("n", "fg", builtin.live_grep)
+      local function get_current_file_extension()
+        local filename = vim.fn.expand("%:t") -- Get current file name
+        return filename:match("^.+%.(.+)$")  -- Extract extension from file name
+      end
+      
+      -- Function to grep files by extension
+      local function grep_by_extension(extension)
+        require('telescope.builtin').live_grep({
+          prompt_title = "Grep for *." .. extension,
+          glob_pattern = "*." .. extension
+        })
+      end
+      
+      -- Create custom :Tfg command
+      vim.api.nvim_create_user_command('Tfg', function(args)
+        local ext = args.args
+      
+        -- If no argument is provided, get the current buffer's extension
+        if ext == "" then
+          ext = get_current_file_extension()
+          if not ext then
+            vim.notify("No file extension detected in the current buffer!", vim.log.levels.ERROR)
+            return
+          end
+        end
+      
+        -- Run grep by the detected or provided extension
+        grep_by_extension(ext)
+      end, { nargs = "?" })  -- nargs=? means zero or one argument can be passed
+      -- Replace the old tfg keymap with this function
+      keymap.set("n", "tfg", function()
+        local ext = get_current_file_extension()
+        if ext then
+          grep_by_extension(ext)
+        else
+          vim.notify("No file extension detected in the current buffer!", vim.log.levels.ERROR)
+        end
+      end, { noremap = true, silent = true })
+      
     end,
   },
 
@@ -111,12 +309,12 @@ require("lazy").setup({
  	}
  end
 
-local keymap = vim.keymap
 keymap.set("n", "<C-a>", "<C-Home>V<C-End>")
 keymap.set("i", "<C-a>", "<Esc><C-Home>V<C-End>")
 keymap.set("v", "<C-a>", "<Esc><C-Home>V<C-End>")
 
 keymap.set("v", "<C-c>", "\"+y")
+keymap.set("v", "<C-s>", "\"+y")
 
 keymap.set("n", "<A-Down>", ":m .+1<CR>==")
 keymap.set("n", "<A-Up>", ":m .-2<CR>==")
@@ -131,6 +329,12 @@ keymap.set("i", "<A-Right>", "<Esc>:tabnext <CR>")
 keymap.set("i", "<A-Left>", "<Esc>:tabprevious <CR>")
 
 vim.cmd([[
-	autocmd FileType xml setlocal shiftwidth=4 tabstop=4 expandtab foldmethod=indent 
-	autocmd FileType python setlocal foldmethod=indent
+  autocmd FileType xml setlocal shiftwidth=4 tabstop=4 expandtab foldmethod=indent 
+  autocmd FileType python setlocal foldmethod=indent
 ]])
+
+-- Auto-save on insert leave
+-- vim.api.nvim_create_autocmd("InsertLeave", {
+--   pattern = "*",
+--   command = "silent! write",
+-- })
