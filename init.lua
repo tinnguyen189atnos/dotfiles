@@ -14,7 +14,20 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   { "nvim-lua/plenary.nvim" },
   { "nvim-tree/nvim-web-devicons" },
-
+  { "nvim-treesitter/nvim-treesitter" ,
+    config = function()
+      require("nvim-treesitter.configs").setup({
+	highlight = {
+	  enable = true,
+	},
+	indent = {
+	  enable = true,
+	},
+      })
+      vim.wo.foldmethod = 'expr'
+      vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+    end
+  },
   { 
     "ellisonleao/gruvbox.nvim",
     config = function()
@@ -237,7 +250,7 @@ require("lazy").setup({
       local function grep_by_extension(extension)
         require('telescope.builtin').live_grep({
           prompt_title = "Grep for *." .. extension,
-          glob_pattern = "*." .. extension
+	  type_filter = extension,
         })
       end
       
@@ -329,8 +342,9 @@ keymap.set("i", "<A-Right>", "<Esc>:tabnext <CR>")
 keymap.set("i", "<A-Left>", "<Esc>:tabprevious <CR>")
 
 vim.cmd([[
-  autocmd FileType xml setlocal shiftwidth=4 tabstop=4 expandtab foldmethod=indent 
-  autocmd FileType python setlocal foldmethod=indent
+  autocmd FileType xml setlocal shiftwidth=4 tabstop=4
+  " autocmd FileType python setlocal foldmethod=indent
+  " autocmd FileType javascript setlocal foldmethod=indent
 ]])
 
 -- Auto-save on insert leave
