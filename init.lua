@@ -352,3 +352,9 @@ vim.cmd([[
 --   pattern = "*",
 --   command = "silent! write",
 -- })
+
+-- Number
+vim.wo.number = true
+-- Cursor block
+vim.wo.cursorline = true
+vim.o.guicursor = ""
